@@ -1,5 +1,6 @@
 import sys
 import os
+import errno
 import multiprocessing
 import cdecimal
 
@@ -26,8 +27,17 @@ peers = {
 if FROZEN and sys.platform == 'win32':
     current_loc = os.path.dirname(sys.executable)
     if APPDATA is not None:
-        database_name = os.path.join(APPDATA, 'Local', 'Augur', 'DB')
-        log_file = os.path.join(APPDATA, 'Local', 'Augur', 'log')
+        appdata_path = os.path.join(APPDATA, 'Local', 'augur')
+        try:
+            os.makedirs(appdata_path)
+        except OSError as exception:
+            if os.path.exists(appdata_path) and os.path.isdir(appdata_path):
+                pass
+            else:
+                if exception.errno != errno.EEXIST:
+                    raise
+        database_name = os.path.join(appdata_path, 'DB')
+        log_file = os.path.join(appdata_path, 'log')
     else:
         database_name = os.path.join(current_loc, 'DB')
         log_file = os.path.join(current_loc, 'log')
