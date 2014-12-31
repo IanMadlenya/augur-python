@@ -3,6 +3,9 @@ import os
 import multiprocessing
 import cdecimal
 
+FROZEN = getattr(sys, 'frozen', False)
+APPDATA = os.getenv('APPDATA', None)
+
 peers = {
     '192.241.212.114:8900': {
         'port': 8900,
@@ -20,13 +23,18 @@ peers = {
     },
 }
 
-if getattr(sys, 'frozen', False):
+if FROZEN and sys.platform == 'win32':
     current_loc = os.path.dirname(sys.executable)
+    if APPDATA is not None:
+        database_name = os.path.join(APPDATA, 'Local', 'Augur', 'DB')
+        log_file = os.path.join(APPDATA, 'Local', 'Augur', 'log')
+    else:
+        database_name = os.path.join(current_loc, 'DB')
+        log_file = os.path.join(current_loc, 'log')
 else:
     current_loc = os.path.dirname(os.path.abspath(__file__))
-
-database_name = os.path.join(current_loc, 'DB')
-log_file = os.path.join(current_loc, 'log')
+    database_name = os.path.join(current_loc, 'DB')
+    log_file = os.path.join(current_loc, 'log')
 
 port = 8900
 api_port = 8899
@@ -36,10 +44,10 @@ version = "0.0012"
 
 max_key_length = 6**4
 total_votecoins = 6**4
-block_reward = 10 ** 5
-premine = 5 * 10 ** 6
+block_reward = 10**5
+premine = 5 * 10**6
 fee = 10 ** 3
-propose_decision_fee = 10 ** 5
+propose_decision_fee = 10**5
 create_jury_fee = 10**4
 jury_vote_fee = 500
 reveal_jury_vote_fee = 500
@@ -62,7 +70,7 @@ download_many = 50  # Max number of blocks to request from a peer at the same ti
 max_download = 58000
 
 #buy_shares_target = '0'*4+'1'+'9'*59
-buy_shares_target = '0'*3+'1'+'9'*60
+buy_shares_target = '0'*3 + '1' + '9'*60
 blocktime = 60
 DB = {
     'reward_peers_queue':multiprocessing.Queue(),
