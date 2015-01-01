@@ -7,6 +7,9 @@ import cdecimal
 FROZEN = getattr(sys, 'frozen', False)
 APPDATA = os.getenv('APPDATA', None)
 
+print FROZEN
+print APPDATA
+
 peers = {
     '192.241.212.114:8900': {
         'port': 8900,
@@ -27,7 +30,8 @@ peers = {
 if FROZEN and sys.platform == 'win32':
     current_loc = os.path.dirname(sys.executable)
     if APPDATA is not None:
-        appdata_path = os.path.join(APPDATA, 'Local', 'augur')
+        appdata_path = os.path.join(APPDATA, 'augur')
+        print appdata_path
         try:
             os.makedirs(appdata_path)
         except OSError as exception:
@@ -37,6 +41,14 @@ if FROZEN and sys.platform == 'win32':
                 if exception.errno != errno.EEXIST:
                     raise
         database_name = os.path.join(appdata_path, 'DB')
+        try:
+            os.makedirs(database_name)
+        except OSError as exception:
+            if os.path.exists(appdata_path) and os.path.isdir(appdata_path):
+                pass
+            else:
+                if exception.errno != errno.EEXIST:
+                    raise
         log_file = os.path.join(appdata_path, 'log')
     else:
         database_name = os.path.join(current_loc, 'DB')
