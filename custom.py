@@ -60,7 +60,7 @@ port = 8900
 api_port = 8899
 database_port = 8898
 
-version = "0.0012"
+version = "0.0014"
 
 max_key_length = 6**4
 total_votecoins = 6**4
